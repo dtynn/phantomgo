@@ -2,6 +2,7 @@ package filesystem
 
 import (
 	"strings"
+	"time"
 
 	"github.com/gopherjs/gopherjs/js"
 )
@@ -37,6 +38,22 @@ func (this *FileSystem) ChangeWorkingDirectory(path string) bool {
 // attributes
 func (this *FileSystem) Size(path string) int {
 	return this.obj.Call("size", path).Int()
+}
+
+func (this *FileSystem) LastModified(path string) (time.Time, bool) {
+	var t time.Time
+
+	o := this.obj.Call("lastModified", path)
+	if o == nil {
+		return t, false
+	}
+
+	t, err := time.Parse(time.RFC3339Nano, o.String())
+	if err != nil {
+		return t, false
+	}
+
+	return t, true
 }
 
 // files
