@@ -1,4 +1,4 @@
-package others
+package phantom
 
 import (
 	"github.com/gopherjs/gopherjs/js"

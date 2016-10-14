@@ -1,4 +1,4 @@
-package others
+package cookiejar
 
 import (
 	"time"
