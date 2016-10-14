@@ -9,12 +9,12 @@ import (
 func NewCookie() Cookie {
 	obj := js.Global.Get("Object").New()
 	return Cookie{
-		Object: obj,
+		obj: obj,
 	}
 }
 
 type Cookie struct {
-	*js.Object
+	obj *js.Object
 
 	Domain   string `js:"domain"`
 	Path     string `js:"path"`
@@ -26,11 +26,11 @@ type Cookie struct {
 }
 
 func (this *Cookie) SetExpiry(expiry time.Time) {
-	this.Set("expiry", expiry.Unix()*1000)
+	this.obj.Set("expiry", expiry.Unix()*1000)
 }
 
 func (this *Cookie) Expires() string {
-	obj := this.Get("expires")
+	obj := this.obj.Get("expires")
 	if obj == js.Undefined {
 		return ""
 	}

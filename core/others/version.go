@@ -5,7 +5,7 @@ import (
 )
 
 type Version struct {
-	*js.Object
+	obj *js.Object
 
 	Major int `js:"major"`
 	Minor int `js:"minor"`

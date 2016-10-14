@@ -7,7 +7,7 @@ import (
 )
 
 var phantomObject = &PhantomObject{
-	Object: js.Global.Get("phantom"),
+	obj: js.Global.Get("phantom"),
 }
 
 func GetPhantomObject() *PhantomObject {
@@ -15,28 +15,28 @@ func GetPhantomObject() *PhantomObject {
 }
 
 type PhantomObject struct {
-	*js.Object
+	obj *js.Object
 
 	Version *others.Version `js:"version"`
 	Cookies []others.Cookie `js:"cookies"`
 }
 
 func (this *PhantomObject) Exit(code int) {
-	this.Call("exit", code)
+	this.obj.Call("exit", code)
 }
 
 func (this *PhantomObject) OnError() *js.Object {
-	return this.Get("onError")
+	return this.obj.Get("onError")
 }
 
 func (this *PhantomObject) SetOnError(handler handlers.OnErrorHandler) {
-	this.Set("onError", handler)
+	this.obj.Set("onError", handler)
 }
 
 func (this *PhantomObject) AddCookie(cookie others.Cookie) bool {
-	return this.Call("addCookie", cookie).Bool()
+	return this.obj.Call("addCookie", cookie).Bool()
 }
 
 func (this *PhantomObject) ClearCookies() {
-	this.Call("clearCookies")
+	this.obj.Call("clearCookies")
 }
