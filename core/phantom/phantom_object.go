@@ -2,28 +2,41 @@ package phantom
 
 import (
 	"github.com/dtynn/phantomgo/core/handlers"
+	"github.com/dtynn/phantomgo/core/others"
 	"github.com/gopherjs/gopherjs/js"
 )
 
+var phantomObject = &PhantomObject{
+	Object: js.Global.Get("phantom"),
+}
+
 func GetPhantomObject() *PhantomObject {
-	obj := js.Global.Get("phantom")
-	return &PhantomObject{
-		obj: obj,
-	}
+	return phantomObject
 }
 
 type PhantomObject struct {
-	obj *js.Object
+	*js.Object
+
+	Version *others.Version `js:"version"`
+	Cookies []others.Cookie `js:"cookies"`
 }
 
 func (this *PhantomObject) Exit(code int) {
-	this.obj.Call("exit", code)
+	this.Call("exit", code)
 }
 
 func (this *PhantomObject) OnError() *js.Object {
-	return this.obj.Get("onError")
+	return this.Get("onError")
 }
 
 func (this *PhantomObject) SetOnError(handler handlers.OnErrorHandler) {
-	this.obj.Set("onError", handler)
+	this.Set("onError", handler)
+}
+
+func (this *PhantomObject) AddCookie(cookie others.Cookie) bool {
+	return this.Call("addCookie", cookie).Bool()
+}
+
+func (this *PhantomObject) ClearCookies() {
+	this.Call("clearCookies")
 }
