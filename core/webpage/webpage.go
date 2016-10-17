@@ -54,10 +54,20 @@ type WebPage struct {
 	ZoomFactor          float64            `js:"zoomFactor"`
 }
 
+// cookies
 func (this *WebPage) AddCookie(cookie cookiejar.Cookie) bool {
 	return this.obj.Call("addCookie", cookie).Bool()
 }
 
+func (this *WebPage) ClearCookies() {
+	this.obj.Call("clearCookies")
+}
+
+func (this *WebPage) DeleteCookie(name string) bool {
+	return this.obj.Call("deleteCookie", name).Bool()
+}
+
+// frames & pages
 func (this *WebPage) ChildFramesCount() int {
 	return this.obj.Call("childFramesCount").Int()
 }
@@ -66,41 +76,8 @@ func (this *WebPage) ChildFramesName() []string {
 	return utils.ObjectToStringSlice(this.obj.Call("childFramesName"))
 }
 
-func (this *WebPage) ClearCookies() {
-	this.obj.Call("clearCookies")
-}
-
-func (this *WebPage) Close() {
-	this.obj.Call("close")
-}
-
 func (this *WebPage) CurrentFrameName() string {
 	return this.obj.Call("currentFrameName").String()
-}
-
-func (this *WebPage) DeleteCookie(name string) bool {
-	return this.obj.Call("deleteCookie", name).Bool()
-}
-
-func (this *WebPage) EvaluateAsync(fn *js.Object, delay time.Duration, args ...interface{}) {
-	params := make([]interface{}, 2, 2+len(args))
-	params[0] = fn
-	params[1] = delay / time.Millisecond
-	params = append(params, args...)
-
-	this.obj.Call("evaluateAsync", params...)
-}
-
-func (this *WebPage) EvaluateJavaScript(text string) *js.Object {
-	return this.obj.Call("evaluateJavaScript", text)
-}
-
-func (this *WebPage) Evaluate(fn *js.Object, args ...interface{}) *js.Object {
-	params := make([]interface{}, 1, 1+len(args))
-	params[0] = fn
-	params = append(params, args...)
-
-	return this.obj.Call("evaluate", params...)
 }
 
 func (this *WebPage) GetPage(windowName string) *WebPage {
@@ -108,6 +85,39 @@ func (this *WebPage) GetPage(windowName string) *WebPage {
 	return &WebPage{
 		obj: obj,
 	}
+}
+
+func (this *WebPage) SwitchToChildFrame(frameName string) bool {
+	return this.obj.Call("switchToChildFrame", frameName).Bool()
+}
+
+func (this *WebPage) SwitchToFocusedFrame() {
+	this.obj.Call("switchToFocusedFrame")
+}
+
+func (this *WebPage) SwitchToFrame(frameName string) bool {
+	return this.obj.Call("switchToFrame", frameName).Bool()
+}
+
+func (this *WebPage) SwitchToMainFrame() {
+	this.obj.Call("switchToMainFrame")
+}
+
+func (this *WebPage) SwitchToParentFrame() bool {
+	return this.obj.Call("switchToParentFrame").Bool()
+}
+
+func (this *WebPage) SetContent(content, url string) {
+	this.obj.Call("setContent", content, url)
+}
+
+func (this *WebPage) UploadFile(selector string, filenames []string) {
+	this.obj.Call("uploadFile", selector, filenames)
+}
+
+// actions & navigations
+func (this *WebPage) Close() {
+	this.obj.Call("close")
 }
 
 func (this *WebPage) GoBack() bool {
@@ -122,15 +132,6 @@ func (this *WebPage) Go(historyRelativeIndex int) bool {
 	return this.obj.Call("go", historyRelativeIndex).Bool()
 }
 
-func (this *WebPage) IncludeJs(url string, callback *js.Object) {
-	this.obj.Call("includeJs", url, callback)
-}
-
-func (this *WebPage) InjectJs(filename string) bool {
-	return this.obj.Call("injectJs", filename).Bool()
-}
-
-// open url
 func (this *WebPage) OpenUrl(url string, request *Request, onLoadFinished OnLoadFinished) {
 	var req js.M
 	if request != nil {
@@ -169,6 +170,69 @@ func (this *WebPage) Reload() {
 	this.obj.Call("reload")
 }
 
+func (this *WebPage) Stop() {
+	this.obj.Call("stop")
+}
+
+// evaluates
+func (this *WebPage) EvaluateAsync(fn *js.Object, delay time.Duration, args ...interface{}) {
+	params := make([]interface{}, 2, 2+len(args))
+	params[0] = fn
+	params[1] = delay / time.Millisecond
+	params = append(params, args...)
+
+	this.obj.Call("evaluateAsync", params...)
+}
+
+func (this *WebPage) EvaluateJavaScript(text string) *js.Object {
+	return this.obj.Call("evaluateJavaScript", text)
+}
+
+func (this *WebPage) Evaluate(fn *js.Object, args ...interface{}) *js.Object {
+	params := make([]interface{}, 1, 1+len(args))
+	params[0] = fn
+	params = append(params, args...)
+
+	return this.obj.Call("evaluate", params...)
+}
+
+func (this *WebPage) StopJavaScript() {
+	this.obj.Call("stopJavaScript")
+}
+
+func (this *WebPage) IncludeJs(url string, callback *js.Object) {
+	this.obj.Call("includeJs", url, callback)
+}
+
+func (this *WebPage) InjectJs(filename string) bool {
+	return this.obj.Call("injectJs", filename).Bool()
+}
+
+// events
+func (this *WebPage) SendMouseEvent(typ mouseEventType, position *MousePosition, button *mouseButton) {
+	args := make([]interface{}, 4)
+	args[0] = typ
+	if position != nil {
+		args[1] = position.X
+		args[2] = position.Y
+	}
+
+	if button != nil {
+		args[3] = *button
+	}
+
+	this.obj.Call("sendEvent", args...)
+}
+
+func (this *WebPage) SendKeyEvent(typ keyboardEventType, key, modifier int) {
+	this.obj.Call("sendEvent", typ, key, nil, nil, modifier)
+}
+
+func (this *WebPage) SendKeysEvent(typ keyboardEventType, keys string, modifier int) {
+	this.obj.Call("sendEvent", typ, keys, nil, nil, modifier)
+}
+
+// render page
 func (this *WebPage) RenderBase64(format renderFormat) string {
 	return this.obj.Call("renderBase64", format).String()
 }
@@ -195,59 +259,9 @@ func (this *WebPage) Render(filename string, options *RenderOptions) {
 	this.obj.Call("render", filename, opt)
 }
 
-func (this *WebPage) SendMouseEvent(typ mouseEventType, position *MousePosition, button *mouseButton) {
-	args := make([]interface{}, 4)
-	args[0] = typ
-	if position != nil {
-		args[1] = position.X
-		args[2] = position.Y
-	}
-
-	if button != nil {
-		args[3] = *button
-	}
-
-	this.obj.Call("sendEvent", args...)
-}
-
-func (this *WebPage) SendKeyEvent(typ keyboardEventType, key, modifier int) {
-	this.obj.Call("sendEvent", typ, key, nil, nil, modifier)
-}
-
-func (this *WebPage) SendKeysEvent(typ keyboardEventType, keys string, modifier int) {
-	this.obj.Call("sendEvent", typ, keys, nil, nil, modifier)
-}
-
-func (this *WebPage) SetContent(content, url string) {
-	this.obj.Call("setContent", content, url)
-}
-
-func (this *WebPage) Stop() {
-	this.obj.Call("stop")
-}
-
-func (this *WebPage) SwitchToChildFrame(frameName string) bool {
-	return this.obj.Call("switchToChildFrame", frameName).Bool()
-}
-
-func (this *WebPage) SwitchToFocusedFrame() {
-	this.obj.Call("switchToFocusedFrame")
-}
-
-func (this *WebPage) SwitchToFrame(frameName string) bool {
-	return this.obj.Call("switchToFrame", frameName).Bool()
-}
-
-func (this *WebPage) SwitchToMainFrame() {
-	this.obj.Call("switchToMainFrame")
-}
-
-func (this *WebPage) SwitchToParentFrame() bool {
-	return this.obj.Call("switchToParentFrame").Bool()
-}
-
-func (this *WebPage) UploadFile(selector string, filepath string) {
-	this.obj.Call("uploadFile", selector, filepath)
+// others
+func (this *WebPage) SetProxy(proxyUrl string) {
+	this.obj.Call("setProxy", proxyUrl)
 }
 
 // handlers
