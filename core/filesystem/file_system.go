@@ -7,12 +7,14 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-func NewFileSystem() *FileSystem {
-	obj := js.Global.Call("require", "fs")
-
+func ObjectToFileSystem(obj *js.Object) *FileSystem {
 	return &FileSystem{
 		obj: obj,
 	}
+}
+
+func NewFileSystem() *FileSystem {
+	return ObjectToFileSystem(js.Global.Call("require", "fs"))
 }
 
 type FileSystem struct {

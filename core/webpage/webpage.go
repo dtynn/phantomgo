@@ -8,53 +8,60 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-func NewWebPage() *WebPage {
-	obj := js.Global.Call("require", "webpage").Call("create")
-
+func ObjectToWebPage(obj *js.Object) *WebPage {
 	return &WebPage{
 		obj: obj,
 	}
 }
 
+func NewWebPage() *WebPage {
+	return ObjectToWebPage(js.Global.Call("require", "webpage").Call("create"))
+}
+
 type WebPage struct {
 	obj *js.Object
 
-	CanGoBack           bool               `js:"canGoBack"`
-	CanGoForward        bool               `js:"canGoForward"`
-	ClipRect            *ClipRect          `js:"clipRect"`
-	Content             string             `js:"content"`
-	Cookies             []cookiejar.Cookie `js:"cookies"`
-	CustomHeaders       map[string]string  `js:"customHeaders"`
-	Event               *Event             `js:"event"`
-	FocusedFrameName    string             `js:"focusedFrameName"`
-	FrameContent        string             `js:"frameContent"`
-	FrameName           string             `js:"frameName"`
-	FramePlainText      string             `js:"framePlainText"`
-	FrameTitle          string             `js:"frameTitle"`
-	FrameUrl            string             `js:"frameUrl"`
-	FramesCount         int                `js:"framesCount"`
-	FramesName          []string           `js:"framesName"`
-	LibraryPath         string             `js:"libraryPath"`
-	Loading             bool               `js:"loading"`
-	LoadingProgress     int                `js:"loadingProgress"`
-	NavigationLocked    bool               `js:"navigationLocked"`
-	OfflineStoragePath  string             `js:"offlineStoragePath"`
-	OfflineStorageQuota int                `js:"offlineStorageQuota"`
-	OwnsPages           bool               `js:"ownsPages"`
-	PagesWindowName     []string           `js:"pagesWindowName"`
-	Pages               []WebPage          `js:"pages"`
-	PaperSize           *PaperSize         `js:"paperSize"`
-	PlainText           string             `js:"plainText"`
-	ScrollPosition      *ScrollPosition    `js:"scrollPosition"`
-	Settings            *PageSettings      `js:"settings"`
-	Title               string             `js:"title"`
-	Url                 string             `js:"url"`
-	ViewportSize        *Size              `js:"viewportSize"`
-	WindowName          string             `js:"windowName"`
-	ZoomFactor          float64            `js:"zoomFactor"`
+	CanGoBack           bool                 `js:"canGoBack"`
+	CanGoForward        bool                 `js:"canGoForward"`
+	ClipRect            *ClipRect            `js:"clipRect"`
+	Content             string               `js:"content"`
+	Cookies             []cookiejar.Cookie   `js:"cookies"`
+	CookieJar           *cookiejar.CookieJar `js:"cookieJar"`
+	CustomHeaders       map[string]string    `js:"customHeaders"`
+	Event               *Event               `js:"event"`
+	FocusedFrameName    string               `js:"focusedFrameName"`
+	FrameContent        string               `js:"frameContent"`
+	FrameName           string               `js:"frameName"`
+	FramePlainText      string               `js:"framePlainText"`
+	FrameTitle          string               `js:"frameTitle"`
+	FrameUrl            string               `js:"frameUrl"`
+	FramesCount         int                  `js:"framesCount"`
+	FramesName          []string             `js:"framesName"`
+	LibraryPath         string               `js:"libraryPath"`
+	Loading             bool                 `js:"loading"`
+	LoadingProgress     int                  `js:"loadingProgress"`
+	NavigationLocked    bool                 `js:"navigationLocked"`
+	OfflineStoragePath  string               `js:"offlineStoragePath"`
+	OfflineStorageQuota int                  `js:"offlineStorageQuota"`
+	OwnsPages           bool                 `js:"ownsPages"`
+	PagesWindowName     []string             `js:"pagesWindowName"`
+	Pages               []WebPage            `js:"pages"`
+	PaperSize           *PaperSize           `js:"paperSize"`
+	PlainText           string               `js:"plainText"`
+	ScrollPosition      *ScrollPosition      `js:"scrollPosition"`
+	Settings            *PageSettings        `js:"settings"`
+	Title               string               `js:"title"`
+	Url                 string               `js:"url"`
+	ViewportSize        *Size                `js:"viewportSize"`
+	WindowName          string               `js:"windowName"`
+	ZoomFactor          float64              `js:"zoomFactor"`
 }
 
 // cookies
+func (this *WebPage) name() {
+
+}
+
 func (this *WebPage) AddCookie(cookie cookiejar.Cookie) bool {
 	return this.obj.Call("addCookie", cookie).Bool()
 }

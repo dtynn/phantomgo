@@ -4,11 +4,14 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-func NewSystem() *System {
-
+func ObjectToSystem(obj *js.Object) *System {
 	return &System{
-		obj: js.Global.Call("require", "system"),
+		obj: obj,
 	}
+}
+
+func NewSystem() *System {
+	return ObjectToSystem(js.Global.Call("require", "system"))
 }
 
 type System struct {
