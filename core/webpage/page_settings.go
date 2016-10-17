@@ -6,7 +6,7 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-type Settings struct {
+type PageSettings struct {
 	obj *js.Object
 
 	JavascriptEnabled             bool   `js:"javascriptEnabled"`
@@ -22,6 +22,6 @@ type Settings struct {
 	ResourceTimeout               int64  `js:"resourceTimeout"`
 }
 
-func (this *Settings) SetResourceTimeout(timeout time.Duration) {
+func (this *PageSettings) SetResourceTimeout(timeout time.Duration) {
 	this.obj.Set("resourceTimeout", timeout/time.Millisecond)
 }

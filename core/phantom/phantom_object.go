@@ -2,7 +2,7 @@ package phantom
 
 import (
 	"github.com/dtynn/phantomgo/core/cookiejar"
-	"github.com/dtynn/phantomgo/core/handlers"
+	"github.com/dtynn/phantomgo/core/webpage"
 	"github.com/gopherjs/gopherjs/js"
 )
 
@@ -29,7 +29,7 @@ func (this *PhantomObject) OnError() *js.Object {
 	return this.obj.Get("onError")
 }
 
-func (this *PhantomObject) SetOnError(handler handlers.OnErrorHandler) {
+func (this *PhantomObject) SetOnError(handler webpage.OnError) {
 	this.obj.Set("onError", handler)
 }
 
