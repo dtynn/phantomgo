@@ -7,6 +7,11 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
+const (
+	ResourceResponseStageStart = "start"
+	ResourceResponseStageEnd   = "end"
+)
+
 type ResourceError struct {
 	obj *js.Object
 

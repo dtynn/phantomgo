@@ -328,7 +328,7 @@ func (this *WebPage) OnResourceError(fn OnResourceError) {
 	this.obj.Set("onResourceError", fn)
 }
 
-func (this *WebPage) OnResourceReceived(fn OnResourceRequested) {
+func (this *WebPage) OnResourceReceived(fn OnResourceReceived) {
 	this.obj.Set("onResourceReceived", fn)
 }
 
