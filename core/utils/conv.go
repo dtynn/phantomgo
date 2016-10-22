@@ -25,7 +25,7 @@ func DateObjectToTime(obj *js.Object) *time.Time {
 		return nil
 	}
 
-	t := time.Unix(obj.Call("getTime").Int64(), 0)
+	t := time.Unix(obj.Call("getTime").Int64()/1000, 0)
 
 	return &t
 }

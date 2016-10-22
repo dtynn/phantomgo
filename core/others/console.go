@@ -4,17 +4,18 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-func GetConsole() *Console {
-	obj := js.Global.Get("console")
-	return &Console{
-		obj: obj,
-	}
+var consoleObj = &ConsoleObject{
+	obj: js.Global.Get("console"),
 }
 
-type Console struct {
+func Console() *ConsoleObject {
+	return consoleObj
+}
+
+type ConsoleObject struct {
 	obj *js.Object
 }
 
-func (this *Console) Log(msgs ...interface{}) {
+func (this *ConsoleObject) Log(msgs ...interface{}) {
 	this.obj.Call("log", msgs...)
 }
