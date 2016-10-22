@@ -13,7 +13,7 @@ var phantomObject = &PhantomObject{
 	obj: js.Global.Get("phantom"),
 }
 
-func GetPhantomObject() *PhantomObject {
+func Phantom() *PhantomObject {
 	return phantomObject
 }
 
